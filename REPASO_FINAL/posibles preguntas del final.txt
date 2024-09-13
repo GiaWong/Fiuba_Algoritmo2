@@ -1,0 +1,5 @@
+reordenar un vector de menor a mayor usando heapsort
+reordenar un vector de mayor a menor usando heapsort
+
+Armar un heap, o programar un hepyfiy
+

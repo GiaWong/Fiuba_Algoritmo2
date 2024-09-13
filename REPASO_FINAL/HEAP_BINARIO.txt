@@ -1,0 +1,289 @@
+-----------------------------------------------------------------------------------------------------------------------------------								
+															HEAP BINARIO
+														  video  33:17 min.
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Existe dos metodos de recorrido de verificación y combinación:
+
+								 |--------------------|--------------------|
+				                 |     sift down  	  |      sift up       |
+								 |--------------------|--------------------|
+							 	 |combinar de nodo	  |va de hijos hacia   |
+						   	     |padre y ver a sus	  |padre y se combinan |
+						 		 |hijos si son > o <  |		               |	
+						 		 |--------------------|--------------------|
+
+
+Existen dos algoritmos para arman un  heap:	
+
+
+==>Algoritmo de insertar: Inserta elementos en un heap vacio uno a uno:
+
+ Si tengo un vector/array de n elementos					   A
+	|---|---|---|---|---|									  /  \			Para n operaciones log(n),con complejidad  O(n log(n))
+	| A	| B	| G	| C	| S	|			------->	             B    G    ------> 	
+	|---|---|---|---|---|  inserto uno a uno en un heap     / \  / \				Osea si para cada operación de insersión
+									vacio				   C   S					de cada elemento es log(n), entonces para
+																					insertar n elementos su complejidad será
+																					           
+																					           O( n log(n) )
+																					        
+
+
+==>Algoritmo Heapify:   Ordena a un vector en su mismo lugar sin usar memoria extra y lo transforma 	         / video min 44:07 /
+			(hepifai)	en el heap tiene aprox (n/2)log(n) aplicando sift down/ sift up AL PENULTIMO NIVEL  	    
+					    para ordenarlo como un heap MINIMAL/MAXIMAL		
+	
+																											
+ Osea tenés un vector/array desordenado de n elementos										
+								 
+|---|---|---|---|---|---|---|---|---|---|---|---|									  			(el dibujo va a bajo)
+|12	| 2	|90	|15	| 3	| 1	|14	|45	|34	| 9	|98	| 5	|		 			 ------->	              	
+|---|---|---|---|---|---|---|---|---|---|---|---| 			
+               
+               												reorganizar el array para que 
+																	cumpla el Heap
+																		 Y	
+																		 Y
+				                        No te dice que debes armar inicialmente un heap con los numeros del array,
+				                            sino reordena el arrray (en el mismo lugar) para que cumpla con 
+				                                         la propiedad del heap.
+				                                         
+	
+			(No es un heap, ya que no hay una secuencia de orden vertical como Máximo o Mínimo)			      												
+														12
+													  /    \                
+													 /      \                  
+										 			/        \
+										 		   /          \	                                 
+												  2           90   ----> (ver el video casi al final)      45:01 ver: https://youtu.be/w2JDgCd_6SE?t=2701
+												/  \	     /   \	                                 
+										 	  15    3       1    14					
+											 / \	/ \	   / \   /\					  
+										   45  34  9  98  5                 
+
+
+==>  Aplicamos Sift Down para construir un HEAP MINIMAL :
+
+	v={12,2,90,15,3,1,14,45,34,9,98,5}
+
+																¿?
+
+
+
+
+
+
+La complejidad del Heapify es levemente mas liviana a la del insertar uno a uno
+                                   
+										 	 	(n/2)log(n) < nlog(n)
+											 	  Y
+										es la mitad del nivel, en el peor de los casos.        
+
+
+
+**************************************************************************************************************************************
+Una aplicación es en el MÉTODO DE ORDENAMIENTO HEAP SORT, es practicamente incorporar el Heap en el sort
+
+  ordenamiento HEAP SORT implace  es extraer la raiz del heap!!! MINIMAL y heapify reorganiza al vector con las condiciones necesarias para cumplir con la propiedad del heap
+
+
+						7			---->extraigo el 7 y lo reemplazo con el ultimo nodo ocupado del nivel final
+					9     12
+				21    15   20    32  
+
+
+	vector	[7,9,12,21,15,20,32]
+
+
+
+						32			---->extraigo el 7 y lo reemplazo con el ultimo nodo ocupado del nivel final
+					9     12
+				21    15   20    7  
+
+
+	vector	[32,9,12,21,15,20| 7]
+							   Y¬¬¬¬¬¬¬¬ el ultimo elemento del vector va a ocupar el primer lugar del vector, en este caso ya está intercambiado
+							    luego la ultima posicion (7) ya no va a pertenecer al vector porque ya hacido quitado del heap por eso lo represento como [..,20|7]
+							  	
+								entonces los elementos del array queda: tope-1
+
+
+
+
+	luego se hace el sift down para cumplir la propiedad del heap:
+				
+						32				 ---->		        9                 ---->           9
+					9       12				    	   32       12			                15   12
+				21    15   20   (7)                 21   15     20  (7)                 21   32   20  (7)
+
+
+	vector	[32,9,12,21,15,20| 7]			vector	[9,32,12,21,15,20| 7]			vector	[9,15,12,21,32,20| 7]
+
+
+
+Y asi se repite tantas veces hasta que no quede ningun elemento:
+
+
+
+
+						9      ---> quito el 9 y lo reemplazo con el elemento hoja del ultimo nivel
+					15    12
+				21  32   20  (7)
+
+	  vector	[9,15,12,21,32,20| 7]
+
+
+						20      								 12												
+					15    12			----> sift down  	  15     20				----> sift down	, pero como no hay nada queda ahi nomas.		     
+				21  32   (9)  (7)							21 32   (9) (7)								   
+
+	  vector	[20,15,12,21,32| 9| 7]					vector	[12,15,20,21,32| 9| 7]
+
+
+
+
+
+
+						12      ---> quito el 12 y lo reemplazo con el elemento hoja del ultimo nivel
+					15    20
+				21  32    (9)  (7)
+
+	  vector	[12,15,20,21,32| 9| 7]
+
+
+						32     								 	 15									         15		
+					15    20			----> sift down  	  32     20				----> sift down	     21      20		 ----> sift down	, pero como no hay nada queda ahi nomas.    
+				21  (12)   (9)  (7)	  (swap con el menor)	21 (12)   (9) (7)						   32 (12)   (9)(7)		   
+
+	  vector	[32,15,20,21|12 | 9| 7]					vector	[15,32,20,21|12 | 9| 7]				vector	[15,21,20,32|12 | 9| 7]
+
+
+
+
+
+
+						15      ---> quito el 15 y lo reemplazo con el elemento hoja del ultimo nivel
+					21    20
+				32  (12)    (9)  (7)
+
+	  vector	[15,21,20,32|12 | 9| 7]
+
+
+						32     								 	      20									         	
+					21    20			----> sift down  	       21     32				----> sift down	 pero como no hay nada queda ahi nomas.    
+				(15)  (12)   (9)  (7)	  (swap con el menor)	(15) (12)   (9) (7)						     
+
+	  vector	[32,21,20|15 |12 | 9| 7]					vector	[20,21,32|15 |12 | 9| 7]	
+
+
+
+
+	
+
+						20      ---> quito el 20 y lo reemplazo con el elemento hoja del ultimo nivel
+					21    32
+				(15)  (12)    (9)  (7)
+
+	  vector	[20,21,32|15 |12 | 9| 7]
+
+
+						32     								 	      21									         	
+					21    (20)			----> sift down  	       32     (20)				----> sift down	 pero como no hay nada queda ahi nomas.    
+				(15)  (12)   (9)  (7)	  (swap con el menor)	(15) (12)   (9) (7)						     
+
+	  vector	[32,21|20 |15 |12 | 9| 7]					vector	[21,32|20 |15 |12 | 9| 7]			
+
+
+
+
+
+
+						21      ---> quito el 21 y lo reemplazo con el elemento hoja del ultimo nivel
+					32    (20)
+				(15)  (12)    (9)  (7)
+
+	  vector	[21,32|20 |15 |12 | 9| 7]
+
+
+						32     								 	     									          (32)      	
+					(21)    (20)			----> sift down	 pero como no hay nada queda ahi nomas.    			(21)    (20)
+				(15)  (12)   (9)  (7)	  					     											(15)  (12)  (9)   (7)
+  
+	  vector	[32|21 |20 |15 |12 | 9| 7]														el vector queda como [32 |21 |20 |15 |12 | 9| 7 ]			
+																								queda ordenado descendentemente osea de mayor a menor
+
+
+
+
+
+
+Se sabe que una operación muy simple del heap es extraer la raiz, en un Heap Maximal la raiz es el máximo de todos los nodos
+y en un Heap Minimal la raiz es el mínimo de todos los nodos.
+
+Entonces si yo extraigo la raiz a lo largo del heap entonces voy a recorrer N veces  que irá sacando los numero o nodos en secuencia
+La operación de extraer la raiz tiene una complejidad de log(n) y como a medida que voy quitando raiz voy haciendo n operación
+de extracción por tanto se tiene que la complejidad es un O(n log(n))
+
+-------------------------------------------------------------------------*************-----------------------------------------
+
+Si en un array te viene con los elementos sin ningun  orden para el heap, se tiene que aplicar el algoritmo de heapify para 
+reorganizar  al vector, asi se logra que se respete la propiedad del Heap
+
+-------------------------------------------------------------------------*************-----------------------------------------
+Otra aplicación es la COLA CON PRIORIDAD
+	
+	Cada elemento que se agrega en el heap va hacer un elemento en la cola
+	
+	
+				????????????????????????????????????????????????????????????????????????????????
+							   Pandolfo no fue muy claro en enfatisar este tema
+	
+	
+	Pero yo lo interpreto como por ejemplo tenes tu arbol
+	
+			A
+		   / \     para quitar un elemento siempre desde raiz, entonces quito A y el ultimo elemento F sube, si lo
+		 B     C	analisas detalladamente se comportará como una cola con prioridad, 
+	   / \    / \		considerando que se haya reubicado mediante el sitf up y respetando la 
+	  D   E   F              propiedad del heap.Y la cola siempre sale los primeros en insertarse, sale A, F sube luego se 							
+	  reubica para cumplir que sea heap con sitf up, luego sale B sube el ultimo y asi sucesivament.
+	
+-----------------------------------------------------------------------------------------------------------------------------	
+	ALGORITMOS 2 DA MÁS INCAPIE AL HEAPSORT Y NO AL COLA CON PRIORIDAD
+
+
+LA CARACTERISTICA DE UN HEAP ES QUE CADA RAMA DEL ARBOL SEA DE LA RAIZ HACIA UN NODO HOJA TENGA NODOS DECRECIENTES(MAXIMAL) O CRECIENTES (MINIMAL)
+SIEMPRE ES DE ARRIBA PA ABAJO, Y NO SE MIRA HORIZONTALMENTE
+
+
+
+
+			si un arbol tiene n nodos, cuantos niveles hay? ---> log(n) , entonces la complejidad de insertar en unheap es log(n) niveles
+
+				insertar -> (luego se hace) sift up : compara si el padre es mayor o menor que el mismo y se hace el intercambio
+
+				eliminar la raiz -> (luego se hace) se sube el ultimo nodo hoja del ultimo nivel ->(luego aplicas) sift down: compara entre sus dos hijos quien es el menor o mayor y se hace el intercambio
+			La complejidad de eliminar la raiz es log(n), es la misma justificacion que en el insertar
+
+
+
+
+
+			No en todo problema recursivo se aplica teorema maestro ya que si tenes un algoritmo de iterador que recorre todo los nodos, en ningun
+			momento este se divide, entonces queda definido que no todo recursivo es divide y venceras.
+
+
+
+
+
+
+
+
+										 (A) n ---> llamo n al nodo padre, para buscar matematicamente quienes son sus hijos digo
+										 / \
+										/   \
+		para hallar el hijo izq	 2n+1(B)   (C) 2n+2 ---> para hallar el hijo der
+
+
+		¿Cual es la formula matematica para encontrar el padre a partir de un hijo? (hijo-1)/2 o (n-1)/2

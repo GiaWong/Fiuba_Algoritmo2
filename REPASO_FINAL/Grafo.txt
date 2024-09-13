@@ -1,0 +1,793 @@
+
+========================================================== RESUMEN DE GRAFOS ==========================================================
+
+>>>>CONCEPTO DE GRAFO:
+
+    Se define como grafo de forma representativa como aquel grafico que tiene vértice y aristas, puede ser conexo, dirigido o no dirigido,
+    pesado o no pesado y denso o disperso. Los grafos en la vida real se pueden presentar en situaciones variadas, como por ejemplo en la minería con rutas
+    de tuneles en distintos puntos (mapa de camino en tuneles), tambien se puede presentar como en el caso de las conexiones de tuberias con bombas de agua de la central
+    de suministro hidrico hacia una ciudad o pueblo englobando asi un mapa de conexion, al igual que tambien en la redes de telefonía, como tambien
+    en el cableado electrico a una ciudad; todo nodo o vértice que tiene esa union o arista que conecta a otro nodo hace referencia a un concepto de grafo.
+
+>>>>REPRESENTACIONES DE UN GRAFO:
+
+
+    /*****************************************************************************************************************************\
+        Representación como una Matriz de Incidencia de Grafos no dirigido: (se coloca 1 cuando hay conexion y 0 cuando no hay)
+    /*****************************************************************************************************************************\
+        
+                  
+                                        | A | B | C | D | E | F | ===> vértices
+          (  D  )                     --|-----------------------|
+        a7/    |                      a1| 1   0   1   0   0   0 | ---> ¿Qué vértice conecta a1? (A----a1----C)      
+         /     |                      --|-----------------------|
+        /      |a4                    a2| 0   0   1   0   1   0 | ---> ¿Qué vértice conecta a2? (C----a2----E)
+     ( B )     |                      --|-----------------------|
+ a8 /  |  \a6  |                      a3| 0   0   0   0   1   1 | ---> ¿Qué vértice conecta a3? (E----a3----F)
+   /   |   \   |                      --|-----------------------|
+( A )  |   ( E )                      a4| 0   0   0   1   1   0 | ---> ¿Qué vértice conecta a4? (E----a4----D)
+   \   |a5  /  \                      --|-----------------------|
+ a1 \  |   /    \                     a5| 0   1   1   0   0   0 | ---> ¿Qué vértice conecta a5? (B----a5----C)
+     \ |  /a2    \a3                  --|-----------------------|
+     ( C )        \                   a6| 0   1   0   0   1   0 | ---> ¿Qué vértice conecta a6? (B----a6----E)
+                   \                  --|-----------------------|
+                  ( F )               a7| 0   1   0   1   0   0 | ---> ¿Qué vértice conecta a7? (B----a7----D)
+                                      --|-----------------------|
+                                      a8| 1   1   0   0   0   0 | ---> ¿Qué vértice conecta a8? (A----a8----B) 
+                                      --|-----------------------|
+                                       Y 
+                                       |
+                                aristas(columna)
+
+
+
+    /*****************************************************************************************************************************\
+    Representacóon como una Matriz de Incidencia de Grafos dirigido: (Se coloca -1 al vértice de salida y 1 al vértice de entrada)
+    /*****************************************************************************************************************************\
+
+
+(tomar en cuenta que la * es
+donde apunta, es decir 
+si tengo ----> lo puedo
+representar como ----*)   
+
+
+                                        | A | B | C | D | E | F | ===> vértices
+          (  D  )                     --|-----------------------|
+        a7/    *                      a1|-1   0   1   0   0   0 | ---> ¿Qué vértice conecta a1? (A--->C) se coloca -1 cuando sale del vértice y 1 cuando llega al otro vértice     
+         /     |                      --|-----------------------|
+        *      |a4                    a2| 0   0   1   0  -1   0 | ---> ¿Qué vértice conecta a2? (C<---E)
+     ( B )     |                      --|-----------------------|
+ a8 /  |  *a6  |                      a3| 0   0   0   0  -1   1 | ---> ¿Qué vértice conecta a3? (E--->F)
+   *   |   \   |                      --|-----------------------|
+( A )  |   ( E )                      a4| 0   0   0   1  -1   0 | ---> ¿Qué vértice conecta a4? (E--->D)
+   \   |a5  /  \                      --|-----------------------|
+ a1 \  |   /    \                     a5| 0  -1   1   0   0   0 | ---> ¿Qué vértice conecta a5? (B--->C)
+     * *  *a2    \a3                  --|-----------------------|
+     ( C )        \                   a6| 0   1   0   0  -1   0 | ---> ¿Qué vértice conecta a6? (B<---E)
+                   *                  --|-----------------------|
+                  ( F )               a7| 0   1   0  -1   0   0 | ---> ¿Qué vértice conecta a7? (B<---D)
+                                      --|-----------------------|
+                                      a8| 1  -1   0   0   0   0 | ---> ¿Qué vértice conecta a8? (A<---B) 
+                                      --|-----------------------|
+                                       Y 
+                                       |
+                                aristas(columna)
+
+
+
+                                
+    /*****************************************************************************************************************************\
+                            Representación como una Lista de Adyacente en grafo dirigido:
+    /*****************************************************************************************************************************\
+
+(tomar en cuenta que la * es
+donde apunta, es decir 
+si tengo ----> lo puedo                 cada lista va apuntar a cada adyacente, solo a eso, se coloca solamente a los vértices que apunta cada *
+representar como ----*)                 y si hay un vértice que no apunta a nadie pues no se le agrega a la lista
+
+                                    |---|    |---|
+                                    | A |--->| C |                            ¿El vértice A a que otros vértices apunta? A-->C
+          ( D )                     |---|    |---|
+          /  *
+         /   |                      |---|    |---|    |---|
+        *    |                      | B |--->| A |--->| C |                   ¿El vértice B a que otros vértices apunta? B-->A, B-->C
+     ( B )   |                      |---|    |---|    |---| 
+    /  |  *  |                                                                ¿El vértice C a que otros vértices apunta? a nada
+   *   |   \ |                      |---|    |---|     
+( A )  |   ( E )                    | D |--->| B |                             ¿El vértice D a que otros vértices apunta? D-->B
+   \   |    /  \                    |---|    |---|     
+    \  |   /    \
+     * *  *      \                  |---|    |---|    |---|    |---|    |---|
+     ( C )        \                 | E |--->| D |--->| B |--->| C |--->| F |  ¿El vértice E a que otros vértices apunta? E-->D, E-->B, E--->C, E--->F
+                   *                |---|    |---|    |---|    |---|    |---|  ¿El vértice F a que otros vértices apunta? a nada
+                  ( F )                                                        
+
+
+
+
+
+    /*****************************************************************************************************************************\
+                                Representación como una Lista de Adyacente en grafo no dirigido:
+    /*****************************************************************************************************************************\
+
+
+          ( D )                 ¿El vértice A a que otros vértices apunta? A--->B, A-->C
+          /  |                  ¿El vértice B a que otros vértices apunta? B--->A, B--->C, B--->E, B--->D
+         /   |                  ¿El vértice C a que otros vértices apunta? C--->A, C--->B, C--->E
+        /    |                  ¿El vértice D a que otros vértices apunta? D--->B, D--->E
+     ( B )   |                  ¿El vértice E a que otros vértices apunta? E--->D, E--->B, E--->C, E--->F
+    /  |  \  |                  ¿El vértice F a que otros vértices apunta? F--->E
+   /   |   \ |                  
+( A )  |   ( E )                |---|    |---|    |---|
+   \   |    /  \                | A |--->| B |--->| C |
+    \  |   /    \               |---|    |---|    |---|
+     \ |  /      \                Y
+     ( C )        \               Y
+                   \              Y
+                  ( F )           Y
+                                |---|    |---|    |---|    |---|
+                                | C |--->| A |--->| B |--->| E | 
+                                |---|    |---|    |---|    |---|
+                                  Y
+                                |---|    |---|    |---|    |---|    |---|
+                                | B |--->| A |--->| C |--->| E |--->| D |
+                                |---|    |---|    |---|    |---|    |---|
+                                  Y
+                                  Y
+                                |---|    |---|    |---|   
+                                | D |--->| B |--->| E |
+                                |---|    |---|    |---|
+                                  Y
+                                |---|    |---|    |---|    |---|    |---|
+                                | E |--->| D |--->| B |--->| C |--->| F |
+                                |---|    |---|    |---|    |---|    |---|
+                                  Y
+                                |---|    |---|
+                                | F |--->| E |
+                                |---|    |---|
+
+
+
+                              
+    /*****************************************************************************************************************************\
+            Representación como Matriz de Adyacencia en grafo no dirigido:(se coloca 1 cuando hay conexion y 0 cuando no hay)
+    /*****************************************************************************************************************************\
+
+                             
+                  
+                                        | A | B | C | D | E | F | ===> vértices
+          (  D  )                     --|-----------------------|
+          /    |                       A| 0   1   1   0   0   0 | ---> ¿A conecta con A? 0, ¿A conecta con B? 1,¿A conecta con C? 1.    
+         /     |                      --|-----------------------|           ¿A conecta con D? 0, ¿A conecta con E? 0,¿A conecta con F? 0.
+        /      |                       B| 1   0   1   1   1   0 | ---> ¿B conecta con A? 1, ¿B conecta con B? 0,¿B conecta con C? 1.
+     ( B )     |                      --|-----------------------|               ¿B conecta con D? 1, ¿B conecta con E? 1,¿B conecta con F? 0.
+    /  |  \    |                       C| 1   1   0   0   1   0 | ---> ¿C conecta con A? 1, ¿C conecta con B? 1,¿C conecta con C? 0.
+   /   |   \   |                      --|-----------------------|                   ¿C conecta con D? 0, ¿C conecta con E? 1,¿C conecta con F? 0.
+( A )  |   ( E )                       D| 0   1   0   0   1   0 | ---> ¿D conecta con A? 0, ¿D conecta con B? 1,¿D conecta con C? 0.
+   \   |    /  \                      --|-----------------------|                       ¿D conecta con D? 0, ¿D conecta con E? 1,¿D conecta con F? 0.
+    \  |   /    \                      E| 0   1   1   1   0   1 | ---> ¿E conecta con A? 0, ¿E conecta con B? 1,¿E conecta con C? 1.
+     \ |  /      \                    --|-----------------------|                           ¿E conecta con D? 1, ¿E conecta con E? 0,¿E conecta con F? 1.
+     ( C )        \                    F| 0   0   0   0   1   0 | ---> ¿F conecta con A? 0, ¿F conecta con B? 0,¿F conecta con C? 0.
+                   \                  --|-----------------------|                               ¿F conecta con D? 0, ¿F conecta con E? 1,¿F conecta con F? 0.
+                  ( F )               
+                                       Y 
+                                       |
+                                    vértices
+
+
+    /*****************************************************************************************************************************\
+            Representación como Matriz de Adyacencia en grafo dirigido: (se coloca 1 cuando hay conexion y 0 cuando no hay)
+    /*****************************************************************************************************************************\
+
+(tomar en cuenta que la * es
+donde apunta, es decir 
+si tengo ----> lo puedo                 
+representar como ----*)
+                               
+                  
+                                        | A | B | C | D | E | F | ===> vértices
+          (  D  )                     --|-----------------------|
+          *    |                       A| 0   1   1   0   0   0 | ---> ¿A apunta A? 0, ¿A apunta B? 1,¿A apunta C? 1.    
+         /     |                      --|-----------------------|           ¿A apunta D? 0, ¿A apunta E? 0,¿A apunta F? 0.
+        /      |                       B| 0   0   1   1   1   0 | ---> ¿B apunta A? 0, ¿B apunta B? 0,¿B apunta C? 1.
+     ( B )     |                      --|-----------------------|               ¿B apunta D? 1, ¿B apunta E? 1,¿B apunta F? 0.
+    *  |  \    |                       C| 0   0   0   0   1   0 | ---> ¿C apunta A? 0, ¿C apunta B? 0,¿C apunta C? 0.
+   /   |   *   *                      --|-----------------------|                   ¿C apunta D? 0, ¿C apunta E? 1,¿C apunta F? 0.
+( A )  |   ( E )                       D| 0   0   0   0   1   0 | ---> ¿D apunta A? 0, ¿D apunta B? 0,¿D apunta C? 0.
+   \   |    *  \                      --|-----------------------|                       ¿D apunta D? 0, ¿D apunta E? 1,¿D apunta F? 0.
+    \  |   /    \                      E| 0   0   0   0   0   1 | ---> ¿E apunta A? 0, ¿E apunta B? 0,¿E apunta C? 0.
+     * *  /      \                    --|-----------------------|                           ¿E apunta D? 0, ¿E apunta E? 0,¿E apunta F? 1.
+     ( C )        \                    F| 0   0   0   0   0   0 | ---> ¿F apunta A? 0, ¿F apunta B? 0,¿F apunta C? 0.
+                   *                  --|-----------------------|                               ¿F apunta D? 0, ¿F apunta E? 0,¿F apunta F? 0.
+                  ( F )               
+                                       Y 
+                                       |
+                                    vértices
+
+
+
+
+    /*****************************************************************************************************************************\
+        Representación como Matriz de Adyacencia en grafo dirigido y con peso:(se coloca el peso cuando hay conexion y 0 cuando no hay)
+    /*****************************************************************************************************************************\
+
+(tomar en cuenta que la * es
+donde apunta, es decir 
+si tengo ----> lo puedo                 
+representar como ----*)
+                                
+                  
+                                        | A | B | C | D | E | F | ===> vértices
+          (  D  )                     --|-----------------------|
+          *    |                       A| 0   1   3   0   0   0 | ---> ¿A apunta A? 0, ¿A apunta B? 1,¿A apunta C? 3.    
+        4/     |                      --|-----------------------|           ¿A apunta D? 0, ¿A apunta E? 0,¿A apunta F? 0.
+        /      |2                      B| 0   0   7   4   8   0 | ---> ¿B apunta A? 0, ¿B apunta B? 0,¿B apunta C? 7.
+     ( B )     |                      --|-----------------------|               ¿B apunta D? 4, ¿B apunta E? 8,¿B apunta F? 0.
+    *  |  \8   |                       C| 0   0   0   0   1   0 | ---> ¿C apunta A? 0, ¿C apunta B? 0,¿C apunta C? 0.
+  1/  7|   *   *                      --|-----------------------|                   ¿C apunta D? 0, ¿C apunta E? 1,¿C apunta F? 0.
+( A )  |   ( E )                       D| 0   0   0   0   2   0 | ---> ¿D apunta A? 0, ¿D apunta B? 0,¿D apunta C? 0.
+   \   |    *  \                      --|-----------------------|                       ¿D apunta D? 0, ¿D apunta E? 2,¿D apunta F? 0.
+   3\  |   /1   \                      E| 0   0   0   0   0   1 | ---> ¿E apunta A? 0, ¿E apunta B? 0,¿E apunta C? 0.
+     * *  /      \1                   --|-----------------------|                           ¿E apunta D? 0, ¿E apunta E? 0,¿E apunta F? 1.
+     ( C )        \                    F| 0   0   0   0   0   0 | ---> ¿F apunta A? 0, ¿F apunta B? 0,¿F apunta C? 0.
+                   *                  --|-----------------------|                               ¿F apunta D? 0, ¿F apunta E? 0,¿F apunta F? 0.
+                  ( F )               
+                                       Y 
+                                       |
+                                    vértices
+                                                    
+                                                    
+
+
+
+
+
+                                                    
+                                            COMPLEJIDAD COMPUTACIONAL DE LA REPRESENTACIÓN DEL GRAFO
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Para la LISTA de adyacencia el costo en espacio de esta Representación es O(V + A), donde V es el vértice y A es la arista                       
+"                                                                                                                                                         
+"  Para la matriz de incidencia el costo en espacio de esta Representación es O(V * A), donde V es el vértice y A es la arista        
+"              
+"    Para la matriz de adyacencia el costo en espacio de esta Representación es O(V * V) = O(V²) = O(n²), donde V es el vértice, n es el espacio en memoria  
+"        Si el grafo es denso puede ser una buena Representación                                                                                          
+"                 Si el grafo es disperso es una pésima Representación                                                                                    
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" 
+
+
+
+>>>>RECORRIDOS DE UN GRAFO:
+
+    /***************************************************************************************************************************
+                                        RECORRIDO BFS (recorrido por anchura)
+    ****************************************************************************************************************************/
+       
+       La caracteristica que tiene el recorrido BFS es que recorre anchamente o por anchura a lo largo del grafo.
+       La complejidad computacional del algoritmo se puede expresar como O ( | V | + | E | ), donde | V | es el número de vértices y 
+       | E | es el número de aristas. El razonamiento es porque en el peor caso, cada vértice y cada arista será visitado por el algoritmo.
+
+       Acontinuación se muestra el funcionamiento del algoritmo BFS apoyado por una cola auxiliar: 
+       
+        (E)-------( I )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( F )      ( J )             .Parto por el vértice E, agrego a sus adyacente en la cola:
+    (B)    / |  \     /  /              
+    /\    /  |   \   /  /               |-------------------|        |-------------------|
+   /  \  /   |    \ /  /                |E| | | | | | | | | | -----> |E|B|F|I| | | | | | |
+  /    \/    |   (H ) /                 |-------------------|        |-------------------|
+(A)    (D)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(G )--/       
+
+       
+        (X)-------( I )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( F )      ( J )             .Marco a E como vértice ya visto tanto en la cola como en el grafo.
+    (B)    / |  \     /  /              .Luego me paro en B y agrego sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        |-------------------|
+   /  \  /   |    \ /  /                |E|B|F|I| | | | | | | -----> |E|B|F|I|A|D| | | | |
+  /    \/    |   (H ) /                 |X------------------|        |X------------------|
+(A)    (D)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(G )--/       
+               
+         
+        (X)-------( I )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( F )      ( J )             .Marco a B como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en F y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        |-------------------|
+   /  \  /   |    \ /  /                |E|B|F|I|A|D| | | | | -----> |E|B|F|I|A|D|G|H| | |
+  /    \/    |   (H ) /                 |X-X----------------|        |X-X----------------|
+(A)    (D)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(G )--/       
+               
+                   
+        (X)-------( I )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( J )             .Marco a F como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en I y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        |-------------------|
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H| | | -----> |E|B|F|I|A|D|G|H|J| |
+  /    \/    |   (H ) /                 |X-X-X--------------|        |X-X-X--------------|
+(A)    (D)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(G )--/       
+               
+
+       (X)-------( X )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( J )             .Marco a I como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en A y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        |-------------------|
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H|J| | -----> |E|B|F|I|A|D|G|H|J|C|
+  /    \/    |   (H ) /                 |X-X-X-X------------|        |X-X-X-X------------|
+(A)    (D)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(G )--/  
+
+
+       (X)-------( X )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( J )             .Marco a A como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en D y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        |-------------------|
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H|J|C| -----> |E|B|F|I|A|D|G|H|J|C| (No se agrega nada porque se repite)
+  /    \/    |   (H ) /                 |X-X-X-X-X----------|        |X-X-X-X------------|
+(X)    (D)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(G )--/ 
+
+
+       (X)-------( X )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( J )             .Marco a D como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en G y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H|J|C| -----> (No se agrega nada porque se repite)
+  /    \/    |   (H ) /                 |X-X-X-X-X-X--------| 
+(X)    (X)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(G )--/  
+
+
+       (X)-------( X )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( J )             .Marco a G como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en H y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H|J|C| -----> (No se agrega nada porque se repite)
+  /    \/    |   (H ) /                 |X-X-X-X-X-X-X------| 
+(X)    (X)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(X )--/                   
+
+
+       (X)-------( X )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( J )             .Marco a H como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en J y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H|J|C| -----> (No se agrega nada porque se repite)
+  /    \/    |   ( X) /                 |X-X-X-X-X-X-X-X----| 
+(X)    (X)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(X )--/ 
+
+
+      (X)-------( X )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( X )             .Marco a J como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego me paro en C y agrego a sus adyacentes sin repetir.
+    /\    /  |   \   /  /               |-------------------|        
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H|J|C| -----> (No se agrega nada porque se repite)
+  /    \/    |   ( X) /                 |X-X-X-X-X-X-X-X-X--| 
+(X)    (X)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (C)------(X )--/ 
+
+
+      (X)-------( X )
+       /  \      /   \                  
+      /    \    /     \                 
+     /     ( X )      ( X )             .Marco a C como vértice ya visto tanto en la cola como en el grafo.
+    (X)    / |  \     /  /              .Luego viendo que la cola ya no tiene mas para recorrer, entonces se terminó el recorrido
+    /\    /  |   \   /  /               |-------------------|        
+   /  \  /   |    \ /  /                |E|B|F|I|A|D|G|H|J|C| -----> (No se agrega nada porque se repite)
+  /    \/    |   ( X) /                 |X-X-X-X-X-X-X-X-X-X| 
+(X)    (X)   |   /   /   
+ \     /     |  /   /                   
+  \   /      | /   /     
+   (X)------(X )--/ 
+
+
+
+    /***************************************************************************************************************************
+                                        RECORRIDO DFS (recorrido por profundidad)
+    ****************************************************************************************************************************/
+
+    La caracteristica que tiene el recorrido DFS es que recorre en profundidad a lo largo del grafo. Se comporta como backtraking,
+    explora los hijos de cada nodo o los vértices adyacentes del vértice actual, hasta llegar a un nodo sin hijos, este regresa al nodo anterior
+    y recorrer al otro hijo que falta si es que hay hijos y así sucesivamente, la similitud es muy a backtraking.
+
+    Analizando su complejidad en el peor caso, es O ( b^m ), siendo b el factor de ramificación (número promedio de ramificaciones por nodo) y m la máxima
+    profundidad del espacio de estados. 
+
+
+(tomar en cuenta que la * es
+donde apunta, es decir 
+si tengo ----> lo puedo
+representar como ----*)   
+
+
+                                |----|          .Elijo el nodo A, agrego a la pila junto al vector de visitados
+   ( B )-----*(E)               |    |          .Marco como ya visitado en el grafo al nodo A
+   *   \      *                 |----|
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X)    ( D )                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  |    |                  Visitados=[A| | | | | | ]
+ |   ( C )   |                  |----|
+ |   *       |                  |    | 
+ *  /        *                  |----|
+( G )*------(F)                 |    |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)
+
+
+                                |----|
+   ( B )-----*(E)               |    |          .Selecciono a un HIJO del nodo marcado A, por ejemplo C
+   *   \      *                 |----|          .Se apila ese nodo y si no ha sido visitado se agrega al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X)    ( D )                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  |    |                  Visitados=[A|C| | | | | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  |    | 
+ *  /        *                  |----|
+( G )*------(F)                 | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)
+
+
+                                |----|
+   ( B )-----*(E)               |    |           .Selecciono a un HIJO del nodo marcado C, por ejemplo D
+   *   \      *                 |----|           .Se apila ese nodo y si no ha sido visitado se agrega al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X)    (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  |    |                  Visitados=[A|C |D | | | | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | 
+ *  /        *                  |----|
+( G )*------(F)                 | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)
+
+
+                                |----|
+   ( B )-----*(E-X)             |    |           .Selecciono a un HIJO del nodo marcado D, por ejemplo E
+   *   \      *                 |----|           .Se apila ese nodo y si no ha sido visitado se agrega al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  | E  |                  Visitados=[A|C |D |E | | | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | 
+ *  /        *                  |----|
+( G )*------(F)                 | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)                                
+
+
+                                |----|
+   ( B )-----*(E-X)             |    |           .Selecciono a un HIJO del nodo marcado E,en este caso no tiene hijos
+   *   \      *                 |----|           .Desapilo al nodo sin hijos sin  modificar al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  | X  | ---> quito E                  
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | 
+ *  /        *                  |----|
+( G )*------(F)                 | C  |                  Visitados=[A|C |D |E | | | ]
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)  
+
+
+                                |----|
+   ( B )-----*(E-X)             |    |           .Selecciono al siguiente  HIJO del nodo ya marcado D, por ejemplo F
+   *   \      *                 |----|           .Se apila ese nodo y si no ha sido visitado se agrega al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  | F  |                  Visitados=[A|C |D |E |F | | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | 
+ *  /        *                  |----|
+( G )*------(F-X)               | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)  
+
+
+                                |----|
+   ( B )-----*(E-X)             |    |           .Selecciono a un HIJO del nodo marcado F, por ejemplo G
+   *   \      *                 |----|           .Se apila ese nodo y si no ha sido visitado se agrega al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  | G  |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  | F  |                  Visitados=[A|C |D |E |F |G | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | 
+ *  /        *                  |----|
+(G-X)*------(F-X)               | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)   
+
+
+
+   ( B )-----*(E-X)             |    |           .Selecciono a un HIJO del nodo marcado G,en este caso no tiene hijos
+   *   \      *                 |----|           .Desapilo al nodo sin hijos sin  modificar al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  | G  |---> quito G   
+ |  \     *  |                  |----|    
+ |   *   /   |                  | F  |                  Visitados=[A|C |D |E |F |G | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | 
+ *  /        *                  |----|
+(G-X)*------(F-X)               | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)   
+
+
+   ( B )-----*(E-X)             |    |           .Selecciono al siguiente  HIJO del nodo ya marcado F, en este caso no tiene hijos
+   *   \      *                 |----|           .Desapilo al nodo sin hijos sin  modificar al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  | F  |---> quito F                  Visitados=[A|C |D |E |F |G | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | 
+ *  /        *                  |----|
+(G-X)*------(F-X)               | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)                                                                 
+
+
+   ( B )-----*(E-X)             |    |           .Selecciono al siguiente  HIJO del nodo ya marcado D, en este caso no tiene hijos
+   *   \      *                 |----|           .Desapilo al nodo sin hijos sin  modificar al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  |    |                       Visitados=[A|C |D |E |F |G | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  | D  | ---> quito D
+ *  /        *                  |----|
+(G-X)*------(F-X)               | C  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)  
+
+
+   ( B )-----*(E-X)             |    |           .Selecciono al siguiente  HIJO del nodo ya marcado C, en este caso no tiene hijos
+   *   \      *                 |----|           .Desapilo al nodo sin hijos sin  modificar al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  |    |                       Visitados=[A|C |D |E |F |G | ]
+ |   (C-X)   |                  |----|
+ |   *       |                  |    | 
+ *  /        *                  |----|
+(G-X)*------(F-X)               | C  |---> quito D
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)  
+
+
+
+   (B-X)-----*(E-X)             |    |           .Selecciono al siguiente  HIJO del nodo ya marcado A,  por ejemplo B
+   *   \      *                 |----|           ..Se apila ese nodo y si no ha sido visitado se agrega al vector visitados[]
+  /     \    /                  |    |
+ /       *  /                   |----|
+(A-X )   (D-X)                  |    |   
+ |  \     *  |                  |----|    
+ |   *   /   |                  |    |                       Visitados=[A|C |D |E |F |G | B]
+ |   (C-X)   |                  |----|
+ |   *       |                  |    | 
+ *  /        *                  |----|
+(G-X)*------(F-X)               | B  |
+                                |----|
+                                | A  |
+                                |----|
+                                (pila)  
+
+
+
+>>>>ORDEN TOPOLOGICO DE UN GRAFO:
+
+
+
+/****************************************************************************************************************************************************************
+                                                                >>>ALGORITMO DE DIJKSTRA:
+****************************************************************************************************************************************************************/
+   
+   
+
+
+    El algoritmo Dijkstra permite buscar el camino mas corto en un grafo, osea permite buscar la ruta mas corta entre nodos, para ello
+    es indispensable que las aristas de los grafos tengan pesos.
+
+        ==>Si el peso de cada arista  en todo el grafo tiene valor 1 bastará con usar el algoritmo BFS, ya que su comportamiento son muy similares
+        ==>Si los pesos de las aristas son negativas no se puede usar el algoritmo de dijkstra.
+
+    Cuando se obtiene el camino mas corto desde el vértice origen hacia o hasta el resto de los vértices que compone el grafo, el algoritmo se detiene.
+
+    Para el análisis de la complejidad uno de los clásicos problemas es encontrar la ruta más corta entre un vértice inicial y cualquiera
+    de los vértices de un grafo dado. El algoritmo de Dijkstra presenta una solución por etapas, al estilo de la programación dinámica, cada etapa añade
+    un nuevo vértices al conjunto de vértices, a los que se conoce su distancia de origen.Cada ruta obtenida se basa en tomar el camino ó,ptimo si para ir de un
+    Va hacia un Vb es necesario pasar por Vj, los caminos Va a Vj y de Vb a Vj han de ser minimo.
+
+    Su Complejidad se basa en la siguiente expresión, O(V² + E), donde V es vertice y E es la arista,
+    sin utilizar cola de prioridad, o sino   O(|V|log(|V|) + |E|) si se utiliza cola de prioridad, y presenta una solución eficiente en cuanto a un 
+    camino entre dos nodos.
+
+    En situaciones generales y peor caso se suele situar su complejidad con O(n²), siendo n² operaciones para determinar la longitud del camino más corto entre
+    dos vertices de un grafo dirigido y no dirigido con n vertices.
+
+
+
+    ¿Cómo funciona el algoritmo Dijkstra?. Supongamos el siguiente grafo y teniendo en cuenta lo siguiente: (D;V)  ---->  (distancia acumulada; vertice anterior)
+                                                                                                                [i]                                         [iteraciones/donde estoy parada]
+
+                          1             5
+                (A)----------------(C)-------( F )              .Empieza por cualquier nodo, en este caso elijo el A y busco el menor camino hacia H
+                 \                  \        /  \               
+                 3\                 2\     2/    \3               ¿Qué distancia hay entre A-A y cúal es su precesor? (0;-)
+                   \                  \    /      \                                                                       [A]
+                  ( B )----------------( D )     ( H )          .Luego elijo el menor de sus adyacentes sin formar un ciclo
+                   /          1           |       /  
+                  /                       |      /                ¿Qué distancia hay entre A-C y cúal es su precesor? (0+1;A) ---> (1;A)
+                5/                       4|     /1                                                                                     [C]     
+                /                         |    /                .Luego elijo el menor de sus adyacentes sin formar un ciclo
+              (G)-------------------------( E )                   ¿Qué distancia hay entre C-D y cúal es su precesor? (1+2;C) ---> (3;C)
+                            2                                                                                                         [D]
+                                                                .Luego elijo el menor de sus adyacentes sin formar un ciclo
+                                                                  ¿Qué distancia hay entre D-B y cúal es su precesor? (3+1;D) ---> (4;D)
+                                                                                                                                      [B]
+                                                                .Luego elijo el menor de sus adyacentes sin formar un ciclo, en caso de no hayar menores se busca los adyacentes del nodo precesor
+                                                                  ¿Qué distancia hay entre D-F y cúal es su precesor? (3+2;D) ---> (5;D)
+                                                                                                                                      [F]
+                                                                .Luego elijo el menor de sus adyacentes sin formar un ciclo
+                                                                  ¿Qué distancia hay entre F-H y cúal es su precesor? (5+3;F) ---> (8;F)
+                                                                                                                                      [H]
+                                                           -------------------------------------------------------------------------------------------------------                                                                           
+                                                                .Luego elijo el menor de sus adyacentes sin formar un ciclo
+                                                                  ¿Qué distancia hay entre ??--?? y cúal es su precesor? (??;??) ---> (??;??)
+                                                                                                                                      [??]
+
+
+            (ES DIFICIL EXPLICARLO POR ACÁ, EN TODO CASO EL FUNCIONAMIENTO DEL ALGORITMO ESTÁ PLASMADO EN MI CUADERNO, MIENTRAS TANTO PASO AL SIGUIENTE)
+
+
+
+/****************************************************************************************************************************************************************
+                                                                >>>ALGORITMO DE PRIM:
+****************************************************************************************************************************************************************/
+ 
+El algoritmo construye un arbol de expansión mínimo (AEM) para el gráfico, recordar que el AEM  es un arbol que conecta todos los nodos del grafico y tiene
+el menor costo total entre todos los arboles que conectan todos los nodos.
+
+La longitud de la ruta entre dos nodos en el arbol de expansión minima puede NO ser la ruta más corta entre esos dos nodos en el grafico original.
+
+Para aplicar este algoritmo se requiere que el grafo sea conexo, no dirigido y con peso, así se brindará las condiciones necesarias para encontrar
+un arbol de expansión minima, es decir, será capaz de encontrar un subconjunto de aristas que forman un arbol que incluyan todos los vertices del grafo inicial,
+DONDE EL PESO TOTAL DE LAS ARISTAS DEL ARBOL ES EL VALOR MINIMO POSIBLE.
+
+El analisis de la complejidad del grafo va a depender de su tipo de representacion a la hora de implementarlo, si por ejemplo se trabaja con la representacion de una
+matriz de adyacencia entonces bajo esa condicion su orden de complejidad es de O(N²), siendo n el numero de vertices del grafo.
+Esto tambien se le conoce como la forma directa, ahora bien, en el caso de que se requiera representar al grafo como heap binario la complejidad se modificará a
+ O(log(n)) mientras que si se implementa como heaps de fibonacci este tendrá complejidad tipo O(n log(n)).
+
+
+
+ VER MAS DETALLE EN : https://sites.google.com/site/complejidadalgoritmicaes/prim
+
+ (ES DIFICIL EXPLICARLO POR ACÁ AL FUNCIONAMIENTO DEL PRIM, EN TODO CASO EL FUNCIONAMIENTO DEL ALGORITMO ESTÁ PLASMADO EN MI CUADERNO)
+
+
+
+/****************************************************************************************************************************************************************
+                                                                >>>ALGORITMO DE KRUSKAL:
+****************************************************************************************************************************************************************/
+ 
+    
+El algoritmo de Kruskal, dado un grafo conexo, no dirigido y ponderado, encuentra un árbol de expansión mínima. Es decir,
+es capaz de encontrar un subconjunto de las aristas que formen un árbol que incluya todos los vértices del grafo inicial, donde el peso
+total de las aristas del árbol es el mínimo posible.
+
+
+VER MAS DETALLE EN: https://sites.google.com/site/complejidadalgoritmicaes/kruskal
+
+
+(ES DIFICIL EXPLICARLO POR ACÁ AL FUNCIONAMIENTO DEL KRUSKAL, EN TODO CASO EL FUNCIONAMIENTO DEL ALGORITMO ESTÁ PLASMADO EN MI CUADERNO)
+
+
+TENER EN CUENTA LAS SIGUIENTES DIFERENCIAS ENTRE EL ALGORITMO DE PRIM CON EL ALGORITMO DE KRUSKAL:
+
+
+1)El algoritmo de Prim se inicializa con un nodo, mientras que el algoritmo de Kruskal se inicia con un borde.
+2)El algoritmo de Prim tiene una complejidad de tiempo de O (V2), y la complejidad del tiempo de Kruskal es O (logV).
+3)En el algoritmo de prim, el gráfico debe ser un gráfico conectado, mientras que el de Kruskal también puede funcionar en gráficos desconectados.
+
+
+VER MAS DETALLE EN: https://es.sawakinome.com/articles/general/difference-between-kruskal-and-prim.html
+
+
+
+
+
+/****************************************************************************************************************************************************************
+                                                                >>>ALGORITMO DE FLOYD-WARSHALL:
+****************************************************************************************************************************************************************/
+ 
+
+    DIJKSTRA SOLO TE DA LA distancia MINIMA ENTRE DOS VERTICES a diferencia de FLOYD que que te da:
+    Floyd = Dijkstra + todo par del arbol.
+
+
+    tipo dijkstra solo te da de un solo lado una distancia corta, pero floyd te da de varios lados las distancias cortas (?)
+    osea ver minuto 24:56 https://www.youtube.com/watch?v=sfSNTn51Bs4

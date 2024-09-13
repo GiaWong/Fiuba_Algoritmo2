@@ -1,0 +1,160 @@
+
+
+Ordenamiento por Insertion Sort:
+
+
+
+
+
+
+
+
+
+
+
+==============================================================================================================================================================================================
+
+Ordenamiento por Counting Sort:
+
+
+
+
+
+
+
+
+
+
+
+==============================================================================================================================================================================================
+
+Ordenamiento por Selection Sort:
+
+
+
+
+
+
+
+
+
+
+==============================================================================================================================================================================================
+
+Ordenamiento por Quick Sort:
+
+.En el peor de los casos:
+    Quick Sort en el peor de los casos tendría un O(n²) porque:
+
+    {|.................|} -> n-1
+    {|...............|..} -> n-2
+    {|.............|....} -> n-3
+    {|..........|.......} ..
+    {|........|.........} ..
+    .. ..
+    .. ..
+    . 1
+    entonces en el peor de los casos sería si estuviese desordenado descendentemente cuando queres ordenar ascendentemente
+    tomará mas tiempo en recorrer n veces y llamar recursivamente n veces mas, asi que descarto que Quick sort
+    garantice en el peor de los casos el O(nlogn).
+
+    recordá que no se usa metodo maestro porque en este ejemplo no tiene la forma
+
+.En el mejor de los casos:
+
+    Quick sort en el mejor de los casos sería si la particion se hace siempre a la mitad, tendría T(n)=2T(n/2) +O(n)
+    con n^log2 = n¹=n ---> O(n) = n^log2 ----> O(nlogn)
+            2                          2
+
+Por ejemplo: 
+
+
+Dado el vector V={3,4,6,8,10,11,23,44,56,93,94,98} ,ordenar descendentemente con Quick Sort: osea mayores a la iz del pivote y menores a la derecha del pivote
+
+                                {3,4,6,8,10,11,23,44,56,93,94,98} S1
+
+                                {44,56,93,94,98} |23| {3,4,6,8,10,11} S2
+
+                                {94,98} |93| {44,56} {10,11} |8| {3,4,6} S3
+
+                                |98| {94} |56| {44} |11| {10} {6} |4| {3} S4
+
+                                |94| |44| |10| |6| |3| S5
+
+                                quedando:
+
+                                |98| |94| |93| |56| |44| |23| |11| |10| |8| |6| |4| |3|
+
+
+Entonces viendo que el Quick Sort tenga en el peor de los casos un orden ascendente para este ejemplo
+se puede afirmar que su orden de complejidad sería un T(n)=O(n²)
+
+
+
+==============================================================================================================================================================================================
+Ordenamiento por Merge Sort:
+
+
+
+    Consiste en dividir el problema a resolver en subproblemas del mismo tipo que a su vez se dividirán, mientras no sean suficientemente pequeños o triviales.
+    por ejemplo:
+
+
+    .Dado el siguiente vector V={11, 2, 21, 4, 98, 67, 43, 5, 17, 99, 22, 46, 55, 63, 51} ordenarlo utilizando MergeSort con 3 particiones de menor a mayor
+
+
+        {11, 2, 21, 4, 98| 67, 43, 5, 17, 99| 22, 46, 55, 63, 51}
+
+        {11,2|21,4|98}  {67,43|5,17|99}  {22,46|55,63|51}
+
+        {11|2} {21|4} {98}      {67|43} {5|17} {99}      {22|46} {55|63} {51}
+
+        {11} {2} {21} {4} {98}  {67} {43} {5} {17} {99}  {22} {46} {55} {63} {51}  ------> luego comparo cada uno hasta subir al vector entero
+
+        {2,11} {4,21} {98}  {43,67} {5,17} {99}  {22,46} {55,63} {51}  ---------------------|
+        {2,4,11,21,98} {5,17,43,67,99} {22,46,51,55,63}                                     |>>>> es la mezcla o el mergeo
+        {2,4,5,11,17,21,22,43,46,51,55,63,67,98,99}-----------------------------------------|
+    
+    T(n)=aT(n/b) + f(n), donde a = es la cantidad de llamadas recursivas, b= las veces en que se divide y f(n) es el costo de la mezcla
+    entonces se tiene que:
+
+    a=3, f(n)=n
+    b=3             ===> T(n) = 3 T(n/3) + f(1), con solucion: 
+                                                n^ log  (3) = n^1 ----> como f(n)= n,----> T(n) = O(n*log(n))
+                                                    3                                                    3
+   
+
+
+
+
+Alejandome del ejemplo, vamos analizar el mejor y peor caso de este algoritmo:
+
+En el mejor caso: es si recibe un arreglo ordenado sería lo mismo que en el peor de los casos
+
+En el peor caso:
+
+Merge Sort en el peor de los casos tendría un O(nlogn) porque:
+
+[.....................]---->n (de mezcla)
+[..........][.........]---->n
+[....][....][....][...]---->n
+..
+..
+.
+n/2^k, que es la veces que se divide donde k es el numero de veces que baja o sea
+
+
+       n
+      / \
+  n/2     n/2        n/2^k = 1 -> n=2^k -> log n = k ----> O(log n) y lo que cuesta dividir es O(n) 
+  / \     / \                                 2
+n/4 n/4 n/4 n/4        concluyendo como: T(n)= n(log n)
+..
+..
+.
+
+o si se desea ver de otra forma: T(n)=T(n/2) + T(n/2) + O(n)       -----> T(n)=2T(n/2) + O(n), donde  n^log2 = n¹=n , entonces  O(n) = n^log2  ---> O(nlogn)
+                                         Y       Y       Y                                                 2                                2
+                                   parte iz. parte der. demora en mezclarse
+
+por ende tiene O(nlog(n))
